@@ -2,7 +2,7 @@ This script is used to access to Red Hat Network and obtain errata.
 It requires python-rhnapi (https://github.com/lanky/python-rhnapi).
 Some use cases are as follows:
 
-1. Obtain arch list
+1. Obtain arch list.
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --list-arch
 Alpha
 IA-32
@@ -16,7 +16,7 @@ s390
 s390x
 x86_64
 
-2. Obtain all channel list
+2. List all channels.
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --list-channel
 jb-middleware
 jbdevstudio-1-linux
@@ -48,7 +48,7 @@ rhel-x86_64-desktop-3
 rhel-x86_64-es-3
 (snip)
 
-4. Obtain recent 10 errata from "rhel-x86_64-server-6" channel
+4. Get recent 10 errata from "rhel-x86_64-server-6" channel.
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --count=10
 ==> RHSA-2012:1234 / Important: qemu-kvm security update
 ==> RHBA-2012:1229 / gnome-packagekit bug fix update
@@ -61,7 +61,7 @@ rhel-x86_64-es-3
 ==> RHSA-2012:1202 / Moderate: libvirt security and bug fix update
 ==> RHBA-2012:1195 / openssl bug fix update
 
-5. Obtain recent 10 kernel related errata from "rhel-x86_64-server-6" channel
+5. Get recent 10 kernel related errata from "rhel-x86_64-server-6" channel.
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --package=kernel --count=10
 ==> RHBA-2012:1199 / kernel bug fix update
 ==> RHSA-2012:1156 / Moderate: kernel security and bug fix update
@@ -74,7 +74,7 @@ rhel-x86_64-es-3
 ==> RHSA-2012:0350 / Moderate: kernel security and bug fix update
 ==> RHBA-2012:0124 / kernel bug fix update
 
-6. Obtain recent 2 kernel related errata from "rhel-x86_64-server-6" channel with package version and summary
+6. Get recent 2 kernel related errata from "rhel-x86_64-server-6" channel with package version and summary.
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --package=kernel --print-package --print-topic --count=2            
 ==> RHBA-2012:1199 / kernel bug fix update
 ===> packages:
@@ -97,7 +97,7 @@ which give detailed severity ratings, are available for each vulnerability
 from the CVE links in the References section.
 
 
-7. Obtain most recent kernel related errata from "rhel-x86_64-server-6" channel with detailed information
+7. Get most recent kernel related errata from "rhel-x86_64-server-6" channel with detailed information.
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --package=kernel --print-package --print-topic --print-description --print-bugzilla --count=1
 ==> RHBA-2012:1199 / kernel bug fix update
 ===> packages:
@@ -138,7 +138,7 @@ bugs. The system must be rebooted for this update to take effect.
 840950 livelock in leapsecond insertion [rhel-6.3.z] (https://bugzilla.redhat.com/show_bug.cgi?id=840950)
 
 
-8. Obtain specific errata from "rhel-x86_64-server-6" channel with packages and related bugzilla entries
+8. Obtain specific errata from "rhel-x86_64-server-6" channel with packages and related bugzilla entries.
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --advisory=RHSA-2012:0481 --print-package --print-bugzilla            
 ==> RHSA-2012:0481 / Moderate: kernel security, bug fix, and enhancement update
 ===> packages:
