@@ -29,6 +29,7 @@ parser.add_option("--print-topic", action="store_true", dest="print_topic")
 parser.add_option("--print-description", action="store_true", dest="print_description")
 parser.add_option("--print-bugzilla", action="store_true", dest="print_bugzilla")
 parser.add_option("--count", action="store", type="int", dest="count")
+parser.add_option("--advisory", action="store", type="string", dest="advisory")
 (options, args) = parser.parse_args()
 
 server = options.server if options.server else "rhn.redhat.com"
@@ -68,7 +69,6 @@ if not options.channel:
 errata_list = rhnapi.channel.listErrata(rhn, options.channel)
 if options.pprint:
     pprint(errata_list)
-    sys.exit()
 
 count = 0
 for erratum in errata_list:
@@ -79,16 +79,28 @@ for erratum in errata_list:
     if options.count and count >= options.count: break
     count += 1
 
+    if options.advisory:
+        if erratum['errata_advisory'] != options.advisory:
+            continue
+
     print "==> %s / %s" % (erratum['errata_advisory'], erratum['errata_synopsis'])
 
     if options.print_package:
         packages = rhnapi.errata.listPackages(rhn, erratum['errata_advisory'])
         packages.sort(lambda x, y: cmp(x['package_file'], y['package_file']))
-        for package in packages:
-            if package['package_name'] != options.package: continue
-            version = "%s-%s" % (package['package_version'], package['package_release'])
+        if options.pprint:
+            pprint(packages)
 
-        print "===> package: %s-%s" % (options.package, version)
+        print "===> packages:"
+        for package in packages:
+            if not options.channel in package['providing_channels']:
+                continue
+            if options.package:
+                if package['package_name'] != options.package:
+                    continue
+#            version = "%s-%s" % (package['package_version'], package['package_release'])
+#            print "===> package: %s-%s" % (options.package, version)
+            print "%s-%s-%s" % (package['package_name'], package['package_version'], package['package_release'])
 
     detail = None
     if options.print_topic:
@@ -106,7 +118,7 @@ for erratum in errata_list:
         print "===> related bugzilla:"
         bz_list = rhnapi.errata.bugzillaFixes(rhn, erratum['errata_advisory'])
         for bzid in sorted(bz_list.keys()):
-            print "   %s\t%s" % (bzid, bz_list[bzid])
+            print "%s\t%s" % (bzid, bz_list[bzid])
 
     if options.print_topic or options.print_description or options.print_bugzilla:
         print
