@@ -30,6 +30,7 @@ parser.add_option("--print-description", action="store_true", dest="print_descri
 parser.add_option("--print-bugzilla", action="store_true", dest="print_bugzilla")
 parser.add_option("--count", action="store", type="int", dest="count")
 parser.add_option("--advisory", action="store", type="string", dest="advisory")
+#parser.add_option("--html", action="store_true", dest="html")
 (options, args) = parser.parse_args()
 
 server = options.server if options.server else "rhn.redhat.com"
@@ -98,9 +99,7 @@ for erratum in errata_list:
             if options.package:
                 if package['package_name'] != options.package:
                     continue
-#            version = "%s-%s" % (package['package_version'], package['package_release'])
-#            print "===> package: %s-%s" % (options.package, version)
-            print "%s-%s-%s" % (package['package_name'], package['package_version'], package['package_release'])
+            print "%s-%s-%s (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=%s)" % (package['package_name'], package['package_version'], package['package_release'], package['package_id'])
 
     detail = None
     if options.print_topic:
@@ -118,7 +117,7 @@ for erratum in errata_list:
         print "===> related bugzilla:"
         bz_list = rhnapi.errata.bugzillaFixes(rhn, erratum['errata_advisory'])
         for bzid in sorted(bz_list.keys()):
-            print "%s\t%s" % (bzid, bz_list[bzid])
+            print "%s %s (https://bugzilla.redhat.com/show_bug.cgi?id=%s)" % (bzid, bz_list[bzid], bzid)
 
     if options.print_topic or options.print_description or options.print_bugzilla:
         print
