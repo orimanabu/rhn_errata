@@ -1,5 +1,5 @@
 This script is used to access to Red Hat Network and obtain errata.
-Some use cases follows:
+Some use cases are as follows:
 
 1. Obtain arch list
 % ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --list-arch
