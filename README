@@ -1,0 +1,157 @@
+This script access to Red Hat Network and obtain errata.
+Some use cases follows:
+
+1. Obtain arch list
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --list-arch
+Alpha
+IA-32
+IA-64
+PPC
+Sparc
+Sparc Solaris
+iSeries
+pSeries
+s390
+s390x
+x86_64
+
+2. Obtain all channel list
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --list-channel
+jb-middleware
+jbdevstudio-1-linux
+jbdevstudio-1-mac
+jbdevstudio-1-windows
+jbdevstudio-2-linux
+jbdevstudio-2-mac
+jbdevstudio-2-windows
+redhat-linux-alpha-6.2
+redhat-linux-alpha-7.0
+redhat-linux-alpha-7.1
+redhat-linux-ee-i386-6.2
+redhat-linux-i386-6.2
+(snip)
+
+3. Obtain channels of x86_64 arch.
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --list-channel --arch=x86_64
+rh-x86_64-desktop-4
+rhel-virt
+rhel-x86_64-as-3
+rhel-x86_64-as-4
+rhel-x86_64-as-4.5.z
+rhel-x86_64-as-4.6.z
+rhel-x86_64-as-4.7.z
+rhel-x86_64-as-4.8.z
+rhel-x86_64-client-5
+rhel-x86_64-client-6
+rhel-x86_64-desktop-3
+rhel-x86_64-es-3
+(snip)
+
+4. Obtain recent 10 errata from "rhel-x86_64-server-6" channel
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --count=10
+==> RHSA-2012:1234 / Important: qemu-kvm security update
+==> RHBA-2012:1229 / gnome-packagekit bug fix update
+==> RHSA-2012:1223 / Important: java-1.7.0-openjdk security update
+==> RHSA-2012:1221 / Critical: java-1.6.0-openjdk security update
+==> RHSA-2012:1210 / Critical: firefox security update
+==> RHSA-2012:1208 / Moderate: glibc security update
+==> RHSA-2012:1206 / Moderate: python-paste-script security update
+==> RHBA-2012:1199 / kernel bug fix update
+==> RHSA-2012:1202 / Moderate: libvirt security and bug fix update
+==> RHBA-2012:1195 / openssl bug fix update
+
+5. Obtain recent 10 kernel related errata from "rhel-x86_64-server-6" channel
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --package=kernel --count=10
+==> RHBA-2012:1199 / kernel bug fix update
+==> RHSA-2012:1156 / Moderate: kernel security and bug fix update
+==> RHBA-2012:1104 / kernel bug fix update
+==> RHSA-2012:1064 / Important: kernel security and bug fix update
+==> RHSA-2012:0862 / Moderate: Red Hat Enterprise Linux 6 kernel security, bug fix and enhancement update
+==> RHSA-2012:0743 / Important: kernel security and bug fix update
+==> RHSA-2012:0571 / Moderate: kernel security and bug fix update
+==> RHSA-2012:0481 / Moderate: kernel security, bug fix, and enhancement update
+==> RHSA-2012:0350 / Moderate: kernel security and bug fix update
+==> RHBA-2012:0124 / kernel bug fix update
+
+6. Obtain recent 2 kernel related errata from "rhel-x86_64-server-6" channel with package version and summary
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --package=kernel --print-package --print-topic --count=2            
+==> RHBA-2012:1199 / kernel bug fix update
+===> packages:
+kernel-2.6.32-279.5.2.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=724359)
+===> topic:
+Updated kernel packages that fix two bugs are now available for Red Hat
+Enterprise Linux 6.
+
+
+==> RHSA-2012:1156 / Moderate: kernel security and bug fix update
+===> packages:
+kernel-2.6.32-279.5.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=723522)
+===> topic:
+Updated kernel packages that fix two security issues and several bugs are
+now available for Red Hat Enterprise Linux 6.
+
+The Red Hat Security Response Team has rated this update as having moderate
+security impact. Common Vulnerability Scoring System (CVSS) base scores,
+which give detailed severity ratings, are available for each vulnerability
+from the CVE links in the References section.
+
+
+7. Obtain most recent kernel related errata from "rhel-x86_64-server-6" channel with detailed information
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --package=kernel --print-package --print-topic --print-description --print-bugzilla --count=1
+==> RHBA-2012:1199 / kernel bug fix update
+===> packages:
+kernel-2.6.32-279.5.2.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=724359)
+===> topic:
+Updated kernel packages that fix two bugs are now available for Red Hat
+Enterprise Linux 6.
+===> description:
+The kernel packages contain the Linux kernel, the core of any Linux operating
+system.
+
+When an NTP server asserts the STA_INS flag (Leap Second Insert), the kernel
+starts an hrtimer (high-resolution timer) with a countdown clock. This hrtimer
+expires at end of the current month, midnight UTC, and inserts a second into the
+kernel timekeeping structures. A scheduled leap second occurred on June 30 2012
+midnight UTC.
+
+This update fixes the following bugs:
+
+* Previously in the kernel, when the leap second hrtimer was started, it was
+possible that the kernel livelocked on the xtime_lock variable. This update
+fixes the problem by using a mixture of separate subsystem locks (timekeeping
+and ntp) and removing the xtime_lock variable, thus avoiding the livelock
+scenarios that could occur in the kernel. (BZ#840950)
+
+* After the leap second was inserted, applications calling system calls that
+used futexes consumed almost 100% of available CPU time. This occurred because
+the kernel's timekeeping structure update did not properly update these futexes.
+The futexes repeatedly expired, re-armed, and then expired immediately again.
+This update fixes the problem by properly updating the futex expiration times by
+calling the clock_was_set_delayed() function, an interrupt-safe method of the
+clock_was_set() function. (BZ#847366)
+
+All users are advised to upgrade to these updated packages, which fix these
+bugs. The system must be rebooted for this update to take effect.
+
+===> related bugzilla:
+840950 livelock in leapsecond insertion [rhel-6.3.z] (https://bugzilla.redhat.com/show_bug.cgi?id=840950)
+
+
+8. Obtain specific errata from "rhel-x86_64-server-6" channel with packages and related bugzilla entries
+% ./rhn_errata.py --user=RHN_USERID --password=PASSWORD --channel=rhel-x86_64-server-6 --advisory=RHSA-2012:0481 --print-package --print-bugzilla            
+==> RHSA-2012:0481 / Moderate: kernel security, bug fix, and enhancement update
+===> packages:
+kernel-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699932)
+kernel-debug-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699949)
+kernel-debug-devel-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699950)
+kernel-devel-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699956)
+kernel-doc-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699921)
+kernel-firmware-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699912)
+kernel-headers-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699957)
+perf-2.6.32-220.13.1.el6 (https://rhn.redhat.com/rhn/software/packages/details/Overview.do?pid=699951)
+===> related bugzilla:
+789373 cifs: multiple process stuck waiting for page lock [rhel-6.2.z] (https://bugzilla.redhat.com/show_bug.cgi?id=789373)
+796829 CVE-2012-0879 kernel: block: CLONE_IO io_context refcounting issues (https://bugzilla.redhat.com/show_bug.cgi?id=796829)
+798293 CVE-2012-1090 kernel: cifs: dentry refcount leak when opening a FIFO on lookup leads to panic on unmount (https://bugzilla.redhat.com/show_bug.cgi?id=798293)
+799209 CVE-2012-1097 kernel: regset: Prevent null pointer reference on readonly regsets (https://bugzilla.redhat.com/show_bug.cgi?id=799209)
+802379 Anomaly in mbind memory map causing Java Hotspot JVM Seg fault with NUMA aware ParallelScavange GC [rhel-6.2.z] (https://bugzilla.redhat.com/show_bug.cgi?id=802379)
