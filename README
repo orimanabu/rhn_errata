@@ -1,4 +1,4 @@
-This script access to Red Hat Network and obtain errata.
+This script is used to access to Red Hat Network and obtain errata.
 Some use cases follows:
 
 1. Obtain arch list
