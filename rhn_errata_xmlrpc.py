@@ -2,6 +2,7 @@
 # vim: set et sts=4 sw=4 ts=4 :
 
 # Obtain RHEL errata from RHN.
+# API doc is available at https://access.redhat.com/knowledge/docs/Red_Hat_Network/API_Documentation/
 
 import sys
 import re
