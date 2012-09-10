@@ -40,15 +40,10 @@ client = xmlrpclib.Server(url, verbose=0)
 session = client.auth.login(options.user, options.password)
 
 if options.list_arch:
-#    clist = rhnapi.channel.listSoftwareChannels(rhn)
-    clist = client.channel.listSoftwareChannels(session)
-    clist.sort(lambda x, y: cmp(x['channel_arch'], y['channel_arch']))
-    d = {}
-    for c in clist:
-        if c['channel_parent_label'] != '': continue
-        d[c['channel_arch']] = 1
-    for a in sorted(d.keys()):
-        print a
+    arches = client.channel.software.listArches(session)
+    arches.sort(lambda x, y: cmp(x['arch_name'], y['arch_name']))
+    for a in arches:
+        print a['arch_name']
     sys.exit()
 
 if options.list_channel:
