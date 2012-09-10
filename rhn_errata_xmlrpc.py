@@ -7,9 +7,6 @@ import sys
 import re
 from pprint import pprint
 from optparse import OptionParser, OptionValueError
-#import rhnapi
-#import rhnapi.channel
-#import rhnapi.errata
 import xmlrpclib
 
 parser = OptionParser()
@@ -20,7 +17,6 @@ parser.add_option("--package", action="store", type="string", dest="package")
 parser.add_option("--list-channel", action="store_true", dest="list_channel")
 parser.add_option("--list-arch", action="store_true", dest="list_arch")
 parser.add_option("--test", action="store_true", dest="test_flag")
-#parser.add_option("--server", action="store", type="string", dest="server")
 parser.add_option("--user", action="store", type="string", dest="user")
 parser.add_option("--password", action="store", type="string", dest="password")
 parser.add_option("--pprint", action="store_true", dest="pprint")
@@ -30,12 +26,9 @@ parser.add_option("--print-description", action="store_true", dest="print_descri
 parser.add_option("--print-bugzilla", action="store_true", dest="print_bugzilla")
 parser.add_option("--count", action="store", type="int", dest="count")
 parser.add_option("--advisory", action="store", type="string", dest="advisory")
-#parser.add_option("--html", action="store_true", dest="html")
 (options, args) = parser.parse_args()
 
-#server = options.server if options.server else "rhn.redhat.com"
 url = "https://rhn.redhat.com/rpc/api"
-#rhn = rhnapi.rhnSession(url=server, rhnlogin=options.user, rhnpassword=options.password)
 client = xmlrpclib.Server(url, verbose=0)
 session = client.auth.login(options.user, options.password)
 
@@ -47,7 +40,6 @@ if options.list_arch:
     sys.exit()
 
 if options.list_channel:
-#    clist = rhnapi.channel.listSoftwareChannels(rhn)
     clist = client.channel.listSoftwareChannels(session)
     clist.sort(lambda x, y: cmp(x['channel_label'], y['channel_label']))
     if options.pprint:
@@ -67,7 +59,6 @@ if not options.channel:
     print "no channel specifiled."
     sys.exit()
 
-#errata_list = rhnapi.channel.listErrata(rhn, options.channel)
 errata_list = client.channel.software.listErrata(session, options.channel)
 if options.pprint:
     pprint(errata_list)
@@ -88,7 +79,6 @@ for erratum in errata_list:
     print "==> %s / %s" % (erratum['errata_advisory'], erratum['errata_synopsis'])
 
     if options.print_package:
-#        packages = rhnapi.errata.listPackages(rhn, erratum['errata_advisory'])
         packages = client.errata.listPackages(session, erratum['errata_advisory'])
         packages.sort(lambda x, y: cmp(x['package_file'], y['package_file']))
         if options.pprint:
@@ -105,21 +95,18 @@ for erratum in errata_list:
 
     detail = None
     if options.print_topic:
-#        detail = rhnapi.errata.getDetails(rhn, erratum['errata_advisory'])
         detail = client.errata.getDetails(session, erratum['errata_advisory'])
         print "===> topic:"
         print detail['errata_topic'].strip()
 
     if options.print_description:
         if not detail:
-#            detail = rhnapi.errata.getDetails(rhn, erratum['errata_advisory'])
             detail = client.errata.getDetails(session, erratum['errata_advisory'])
         print "===> description:"
         print detail['errata_description'].encode('utf-8')
 
     if options.print_bugzilla:
         print "===> related bugzilla:"
-#        bz_list = rhnapi.errata.bugzillaFixes(rhn, erratum['errata_advisory'])
         bz_list = client.errata.bugzillaFixes(session, erratum['errata_advisory'])
         for bzid in sorted(bz_list.keys()):
             print "%s %s (https://bugzilla.redhat.com/show_bug.cgi?id=%s)" % (bzid, bz_list[bzid], bzid)
